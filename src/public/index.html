@@ -1,0 +1,43 @@
+<head>
+	<title>Boo.io</title>
+	<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+	<div id="menu" style="display:block;">
+		<div id="banner">
+			<h1>Boo.io</h1>
+		</div>
+    <div id="content">
+      <input type="text" placeholder="nickname" maxlength="16" spellcheck="false" autocomplete="off" id="nickname"></input>
+      <div id="err_msg"></div>
+      <div><button onclick="joinLobby()">Play</button></div>
+    </div>
+	</div>
+	<canvas id="canvas" width=1600 height=900 style="display:none;"></canvas>
+  <script src="https://rawgit.com/kawanet/msgpack-lite/master/dist/msgpack.min.js" defer></script>
+  <script src="menu.js" defer>
+	</script>
+  <script src="game.js" defer>
+	</script>
+	<script src="./util/resize.min.js" defer>
+	</script>
+  <script src="./util/keys.min.js" defer>
+	</script>
+  <script src="./graphics/ghost.min.js" defer>
+	</script>
+  <script src="./graphics/candy.min.js" defer>
+	</script>
+	<script src="app.js" defer>
+	</script>
+
+  <script>
+    let background_music = new Audio("booio.wav"); 
+    background_music.loop = true;
+    background_music.addEventListener("ended", function() {
+        this.currentTime = 0;
+        this.play();
+    }, false);
+    background_music.play();
+  </script>
+</body>
