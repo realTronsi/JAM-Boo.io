@@ -33,12 +33,12 @@ class Player {
     this.x += m.x*this.s;
     this.y += m.y*this.s;
 
-    const MAP_SIZE = 1000;
+    const MAP_SIZE = 2000;
 
-    if(this.x<-MAP_SIZE)this.x=-MAP_SIZE;
-    if(this.x>MAP_SIZE)this.x=MAP_SIZE;
-    if(this.y<-MAP_SIZE)this.y=-MAP_SIZE;
-    if(this.y>MAP_SIZE)this.y=MAP_SIZE;
+    if(this.x<-MAP_SIZE/2)this.x=-MAP_SIZE/2;
+    if(this.x>MAP_SIZE/2)this.x=MAP_SIZE/2;
+    if(this.y<-MAP_SIZE/2)this.y=-MAP_SIZE/2;
+    if(this.y>MAP_SIZE/2)this.y=MAP_SIZE/2;
   }
 }
 
