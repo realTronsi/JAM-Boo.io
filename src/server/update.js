@@ -1,7 +1,11 @@
 const msgpack = require("msgpack-lite");
-const clients = require("./index");
+const { clients, qt, candies } = require("./index");
+const { Vector, Player, Candy, isWhiteSpace, emitAll } = require("./utility");
 
 function Update(){
+  if(candies.length<50){
+    spawnCandy();
+  }
   const e = [];
   clients.forEach(c => {
     c.move();
@@ -28,6 +32,32 @@ function Update(){
     };
     c.ws.send(msgpack.encode(payLoad));
   })
+}
+
+function spawnCandy(){
+  const x = getRandomInt(50, 1950);
+  const y = getRandomInt(50, 1950);
+  const candy = new Candy(x, y);
+  candies.push(candy);
+  qt.push({
+    x: x-5,
+    y: y-5,
+    width: 10,
+    height: 10,
+    item: candy
+  })
+  const payLoad = {
+    m: "c",
+    x: x,
+    y: y
+  }
+  emitAll(msgpack.encode(payLoad));
+}
+
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min);
 }
 
 module.exports = Update;

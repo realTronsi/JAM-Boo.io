@@ -2,15 +2,23 @@ const express = require('express');
 const WebSocket = require('ws');
 const uuid = require("uuid");
 const app = express();
+Quadtree = require("quadtree-lib");
 const msgpack = require("msgpack-lite");
 
 const wss = new WebSocket.Server({ noServer: true });
 
 const clients = [];
+const candies = [];
 
-module.exports = clients;
+qt = new Quadtree({
+  width: 2000,
+  height: 2000,
+  maxElements: 20
+});
 
-const { Vector, Player, isWhiteSpace, emitAll } = require("./utility");
+module.exports = { clients, qt, candies };
+
+const { Vector, Player, Candy, isWhiteSpace, emitAll } = require("./utility");
 const Update = require("./update");
 const Input = require("./input");
 
@@ -50,11 +58,19 @@ wss.on("connection", ws => {
         names = clients.map(c=>c.nickname);
         ids = clients.map(c=>c.id);
         clients.push(client);
+
+        let __candies__ = [];
+
+        const _cand = JSON.parse(JSON.stringify(candies));
+        _cand.forEach(c => delete c.id);
+        _cand.forEach(c=>__candies__.push({x:c.x, y:c.y}));
+
         const payLoad = {
           m: "j",
           n: nickname,
           s: names,
-          i: ids
+          i: ids,
+          c: __candies__
         };
         ws.send(msgpack.encode(payLoad));
       }

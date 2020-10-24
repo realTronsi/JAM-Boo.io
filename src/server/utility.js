@@ -1,4 +1,5 @@
-const clients = require("./index");
+const { clients, qt, candies } = require("./index");
+const uuid = require("uuid");
 
 class Vector {
   constructor(x, y) {
@@ -12,10 +13,18 @@ class Vector {
   }
 }
 
+class Candy {
+  constructor(x, y){
+    this.x = x;
+    this.y = y;
+    this.id = uuid.v4();
+  }
+}
+
 class Player {
   constructor(id, nick, ws) {
-    this.x = 0;
-    this.y = 0;
+    this.x = 1000;
+    this.y = 1000;
     this.s = 9; //speed
     this.id = id;
     this.nickname = nick;
@@ -35,10 +44,10 @@ class Player {
 
     const MAP_SIZE = 2000;
 
-    if(this.x<-MAP_SIZE/2)this.x=-MAP_SIZE/2;
-    if(this.x>MAP_SIZE/2)this.x=MAP_SIZE/2;
-    if(this.y<-MAP_SIZE/2)this.y=-MAP_SIZE/2;
-    if(this.y>MAP_SIZE/2)this.y=MAP_SIZE/2;
+    if(this.x<0)this.x=0;
+    if(this.x>MAP_SIZE)this.x=MAP_SIZE;
+    if(this.y<0)this.y=0;
+    if(this.y>MAP_SIZE)this.y=MAP_SIZE;
   }
 }
 
@@ -57,4 +66,4 @@ function emitAll(message, exception){
   })
 }
 
-module.exports = { Vector, Player, isWhiteSpace, emitAll };
+module.exports = { Vector, Player, Candy, isWhiteSpace, emitAll };

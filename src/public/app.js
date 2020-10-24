@@ -6,6 +6,7 @@ let pl_c = false;
 
 const keys = [];
 let enemies = [];
+let candies = [];
 let player = {};
 const names = [];
 let nickname;
@@ -33,6 +34,7 @@ function main(ws) {
             id: msg.i[n]
           });
         }
+        candies = msg.c;
         joinGame();
       }
       if(pl_c==true){
