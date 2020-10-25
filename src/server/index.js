@@ -10,13 +10,15 @@ const wss = new WebSocket.Server({ noServer: true });
 const clients = [];
 const candies = [];
 
+let lb_timer = 0;
+
 qt = new Quadtree({
   width: 2000,
   height: 2000,
   maxElements: 20
 });
 
-module.exports = { clients, qt, candies };
+module.exports = { clients, qt, candies, lb_timer };
 
 const { Vector, Player, Candy, isWhiteSpace, emitAll } = require("./utility");
 const Update = require("./update");
@@ -73,6 +75,7 @@ wss.on("connection", ws => {
           c: __candies__
         };
         ws.send(msgpack.encode(payLoad));
+        lb_timer = 30;
       }
       if(msg.m=="kd"||msg.m=="ku")Input(msg, client);
     } catch (err){

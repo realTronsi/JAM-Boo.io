@@ -2,6 +2,7 @@ function joinLobby(){
   if(pl_c == true){
     error("Something went wrong, please reload");
   } else {
+    document.getElementById("join").disabled = true;
     const ws = new WebSocket("wss://JAM-Booio.realtronsi.repl.co");
     ws.binaryType = 'arraybuffer';
     main(ws);

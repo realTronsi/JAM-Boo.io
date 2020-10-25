@@ -7,8 +7,10 @@ let pl_c = false;
 const keys = [];
 let enemies = [];
 let candies = [];
+let names = [];
+let scores = [];
+let lb = [];
 let player = {};
-const names = [];
 let nickname;
 
 function main(ws) {
@@ -51,6 +53,23 @@ const processMsg = msg => {
     player.x = msg.p.x;
     player.y = msg.p.y;
     enemies = msg.e;
+    if(msg.p.s!=undefined){
+      lb = [];
+      for(let e in enemies){
+        lb.push({
+          score: enemies[e].s,
+          name: names[e].n,
+          isClient: false
+        })
+      }
+      lb.push({
+        score: msg.p.s,
+        name: nickname,
+        isClient: true
+      })
+      lb.sort((a, b)=>b.score-a.score);
+      console.log(JSON.stringify(lb));
+    }
   } else if(msg.m=="n"){
     names.push({
       n: msg.n,
@@ -58,5 +77,12 @@ const processMsg = msg => {
     });
   } else if(msg.m=="rn"){
     names.splice(names.indexOf(names.find(n=>n.id==msg.i)), 1);
+  } else if(msg.m=="rc"){
+    candies.splice(msg.i, 1);
+  } else if(msg.m=="c"){
+    candies.push({
+      x: msg.x,
+      y: msg.y
+    });
   }
 }

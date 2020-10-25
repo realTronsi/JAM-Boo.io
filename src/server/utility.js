@@ -1,5 +1,6 @@
-const { clients, qt, candies } = require("./index");
+const { clients, qt, candies, lb_timer } = require("./index");
 const uuid = require("uuid");
+const msgpack = require("msgpack-lite");
 
 class Vector {
   constructor(x, y) {
@@ -25,7 +26,8 @@ class Player {
   constructor(id, nick, ws) {
     this.x = 1000;
     this.y = 1000;
-    this.s = 9; //speed
+    this.score = 0;
+    this.spd = 9;
     this.id = id;
     this.nickname = nick;
     this.ws = ws;
@@ -36,11 +38,40 @@ class Player {
     this.alive = true;
     this.invis = 0; //0-9
   }
+  update(){
+    this.move();
+    this.collisions();
+  }
+  collisions(){
+    const colliding = qt.colliding({
+      x: this.x-20,
+      y: this.y-20,
+      width: 40,
+      height: 40
+    }, (e1, e2)=>{
+      return dist(this.x, this.y, e2.x+e2.width/2, e2.y+e2.width/2)<20+e2.width/2;
+    })
+    colliding.forEach(c => {
+      if(c.type == "candy"){
+        const candy = candies.find(e=>e.id==c.item.id);
+        if(candy!=null){
+          const payLoad = {
+            m: "rc",
+            i: candies.indexOf(candy)
+          };
+          candies.splice(candies.indexOf(candy), 1);
+          emitAll(msgpack.encode(payLoad));
+        }
+        this.score++
+        qt.remove(c);
+      }
+    })
+  }
   move() {
     const m = new Vector(this.left + this.right, this.up + this.down);
     m.normalize();
-    this.x += m.x*this.s;
-    this.y += m.y*this.s;
+    this.x += m.x*this.spd;
+    this.y += m.y*this.spd;
 
     const MAP_SIZE = 2000;
 
@@ -49,6 +80,10 @@ class Player {
     if(this.y<0)this.y=0;
     if(this.y>MAP_SIZE)this.y=MAP_SIZE;
   }
+}
+
+function dist(x1, y1, x2, y2){
+  return Math.sqrt(Math.pow(x2-x1, 2)+Math.pow(y2-y1, 2));
 }
 
 function isWhiteSpace(string){

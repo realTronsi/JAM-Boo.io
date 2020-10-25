@@ -1,5 +1,5 @@
 const msgpack = require("msgpack-lite");
-const { clients, qt, candies } = require("./index");
+let { clients, qt, candies, lb_timer } = require("./index");
 const { Vector, Player, Candy, isWhiteSpace, emitAll } = require("./utility");
 
 function Update(){
@@ -8,12 +8,21 @@ function Update(){
   }
   const e = [];
   clients.forEach(c => {
-    c.move();
-    e.push({
-      id: c.id,
-      x: Math.round(c.x),
-      y: Math.round(c.y)
-    })
+    c.update();
+    if(lb_timer >= 30){
+      e.push({
+        id: c.id,
+        x: Math.round(c.x),
+        y: Math.round(c.y),
+        s: c.score
+      })
+    } else {
+      e.push({
+        id: c.id,
+        x: Math.round(c.x),
+        y: Math.round(c.y)
+      })
+    }
   })
   clients.forEach(c => {
     let ee = JSON.parse(JSON.stringify(e));
@@ -26,12 +35,22 @@ function Update(){
       e: ee,
       p: {}
     };
-    payLoad.p = {
-      x: Math.round(c.x),
-      y: Math.round(c.y)
-    };
+    if(lb_timer >= 30){
+      payLoad.p = {
+        x: Math.round(c.x),
+        y: Math.round(c.y),
+        s: c.score
+      };
+    } else {
+      payLoad.p = {
+        x: Math.round(c.x),
+        y: Math.round(c.y)
+      };
+    }
     c.ws.send(msgpack.encode(payLoad));
   })
+  if(lb_timer >= 30)lb_timer=0;
+  lb_timer++;
 }
 
 function spawnCandy(){
@@ -40,10 +59,11 @@ function spawnCandy(){
   const candy = new Candy(x, y);
   candies.push(candy);
   qt.push({
-    x: x-5,
-    y: y-5,
-    width: 10,
-    height: 10,
+    x: x-6,
+    y: y-6,
+    width: 12,
+    height: 12,
+    type: "candy",
     item: candy
   })
   const payLoad = {
@@ -53,6 +73,7 @@ function spawnCandy(){
   }
   emitAll(msgpack.encode(payLoad));
 }
+
 
 function getRandomInt(min, max) {
   min = Math.ceil(min);

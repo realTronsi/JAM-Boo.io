@@ -19,7 +19,9 @@ function drawGame(){
   ctx.fillStyle = "white";
   ctx.font = "30px Poppins";
   ctx.textAlign = "center";
-  ctx.fillText(nickname, canvas.width/2, canvas.height/2+55);
+  const fit_name = fitText(nickname, 350);
+  ctx.fillText(fit_name, canvas.width/2, canvas.height/2+55);
+  drawLB();
 }
 
 function drawMap(){
@@ -56,12 +58,50 @@ function drawEnemies(){
     ctx.fillStyle = "white";
     ctx.font = "30px Poppins";
     ctx.textAlign = "center";
-    ctx.fillText(names[e].n, canvas.width/2-(player.x-enemies[e].x), canvas.height/2-(player.y-enemies[e].y)+55);
+    if(names[e]!=undefined){
+      const fit_name = fitText(names[e].n, 350);
+      ctx.fillText(fit_name, canvas.width/2-(player.x-enemies[e].x), canvas.height/2-(player.y-enemies[e].y)+55);
+    }
   }
 }
 
 function drawCandies(){
   for(let c in candies){
-    drawCandy(canvas.width/2-(player.x-candies[c].x), canvas.height/2-(player.y-candies[c].y), 5, "#f55a42", "#f5c6bf");
+    drawCandy(canvas.width/2-(player.x-candies[c].x), canvas.height/2-(player.y-candies[c].y), 6, "#f55a42", "#f5c6bf");
   }
+}
+
+function drawLB(){
+  ctx.beginPath();
+  ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+  ctx.fillRect(0, 0, 250, 350);
+  ctx.textAlign = "left";
+  ctx.fillStyle = "white";
+  ctx.font = "bold 30px Poppins";
+  ctx.fillText("Leaderboard", 20, 40);
+  for(let l in lb){
+    ctx.fillStyle = "#eee";
+    ctx.font = "21px Poppins";
+    if(lb[l].isClient == true){
+      ctx.fillStyle = "#ffc414";
+    }
+    ctx.beginPath();
+    const fit_name = fitText(lb[l].name, 150);
+    const fit_score = reduce_num(lb[l].score, 1);
+    ctx.fillText(`${fit_name}: ${fit_score}`, 20, 75+30*l);
+  }
+}
+
+function fitText(text, maxWidth){
+  const text_width = ctx.measureText(text).width;
+  if(text_width>maxWidth){
+    for(let i = text.length-1; i > 0; i--){
+      text = text.slice(0, -1);
+      if(ctx.measureText(text).width<maxWidth){
+        return text+"...";
+      }
+    }
+    return text;
+  }
+  return text;
 }
