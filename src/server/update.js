@@ -1,5 +1,5 @@
 const msgpack = require("msgpack-lite");
-let { clients, qt, candies, lb_timer } = require("./index");
+let { clients, qt, candies, gums, lb_timer } = require("./index");
 const { Vector, Player, Candy, isWhiteSpace, emitAll } = require("./utility");
 
 function Update(){
@@ -9,46 +9,65 @@ function Update(){
   const e = [];
   clients.forEach(c => {
     c.update();
-    if(lb_timer >= 30){
-      e.push({
-        id: c.id,
-        x: Math.round(c.x),
-        y: Math.round(c.y),
-        s: c.score
-      })
-    } else {
-      e.push({
-        id: c.id,
-        x: Math.round(c.x),
-        y: Math.round(c.y)
-      })
+    if(c.alive==true){
+      if(lb_timer >= 30){
+        e.push({
+          id: c.id,
+          x: Math.round(c.x),
+          y: Math.round(c.y),
+          s: c.score
+        })
+      } else {
+        e.push({
+          id: c.id,
+          x: Math.round(c.x),
+          y: Math.round(c.y)
+        })
+      }
     }
   })
+  gums.forEach(g => {
+    g.update();
+    if(g.lifespan<0){
+      g.delete();
+    }
+  });
   clients.forEach(c => {
     let ee = JSON.parse(JSON.stringify(e));
     ee = ee.filter(i => i.id!=c.id);
     ee.forEach(o => {
       delete o.id;
     });
+    let _gg = qt.find(g=>g.type=="gum" && Math.abs((g.x+6)-c.x)<800 && Math.abs((g.y+6)-c.y)<450);
+    const gg = [];
+    _gg.forEach(g=>{
+      gg.push({
+        x: Math.round(g.item.x),
+        y: Math.round(g.item.y)
+      });
+    });
     const payLoad = {
       m: "u",
       e: ee,
+      g: gg,
       p: {}
     };
     if(lb_timer >= 30){
       payLoad.p = {
         x: Math.round(c.x),
         y: Math.round(c.y),
+        r: c.reload,
         s: c.score
       };
     } else {
       payLoad.p = {
         x: Math.round(c.x),
-        y: Math.round(c.y)
+        y: Math.round(c.y),
+        r: c.reload
       };
     }
     c.ws.send(msgpack.encode(payLoad));
-  })
+  });
   if(lb_timer >= 30)lb_timer=0;
   lb_timer++;
 }
@@ -56,22 +75,7 @@ function Update(){
 function spawnCandy(){
   const x = getRandomInt(50, 1950);
   const y = getRandomInt(50, 1950);
-  const candy = new Candy(x, y);
-  candies.push(candy);
-  qt.push({
-    x: x-6,
-    y: y-6,
-    width: 12,
-    height: 12,
-    type: "candy",
-    item: candy
-  })
-  const payLoad = {
-    m: "c",
-    x: x,
-    y: y
-  }
-  emitAll(msgpack.encode(payLoad));
+  candies.push(new Candy(x, y));
 }
 
 

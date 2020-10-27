@@ -7,11 +7,14 @@ let pl_c = false;
 const keys = [];
 let enemies = [];
 let candies = [];
+let gums = [];
 let names = [];
 let scores = [];
 let lb = [];
 let player = {};
 let nickname;
+let alive = 0;
+let killedBy = "";
 
 function main(ws) {
   ws.onopen = function() {
@@ -52,7 +55,9 @@ const processMsg = msg => {
   if(msg.m=="u"){
     player.x = msg.p.x;
     player.y = msg.p.y;
+    player.reload = msg.p.r;
     enemies = msg.e;
+    gums = msg.g;
     if(msg.p.s!=undefined){
       lb = [];
       for(let e in enemies){
@@ -84,5 +89,8 @@ const processMsg = msg => {
       x: msg.x,
       y: msg.y
     });
+  } else if (msg.m=="di"){
+    alive = 1;
+    killedBy = msg.k;
   }
 }

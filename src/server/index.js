@@ -9,6 +9,7 @@ const wss = new WebSocket.Server({ noServer: true });
 
 const clients = [];
 const candies = [];
+const gums = [];
 
 let lb_timer = 0;
 
@@ -18,7 +19,7 @@ qt = new Quadtree({
   maxElements: 20
 });
 
-module.exports = { clients, qt, candies, lb_timer };
+module.exports = { clients, qt, candies, gums, lb_timer };
 
 const { Vector, Player, Candy, isWhiteSpace, emitAll } = require("./utility");
 const Update = require("./update");
@@ -76,8 +77,9 @@ wss.on("connection", ws => {
         };
         ws.send(msgpack.encode(payLoad));
         lb_timer = 30;
+      } else {
+        Input(msg, client);
       }
-      if(msg.m=="kd"||msg.m=="ku")Input(msg, client);
     } catch (err){
       console.log(err)
     }
