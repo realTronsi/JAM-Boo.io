@@ -18,9 +18,15 @@ function drawGame() {
   if (alive == 0) {
     let color = "white"
     if(baseinvis-player.invis<=15){
-      color = "rgba(255, 255, 255, "+(Math.abs((baseinvis-player.invis)-15)/2)/7.5+"";
-    } else if(player.invis > 0) {
-      color = "rgba(255, 255, 255, 0.5";
+      color = "rgba(255, 255, 255, "+((Math.abs((baseinvis-player.invis)-15)/30)+0.5)+")";
+    } else if(player.invis > 30) {
+      color = "rgba(255, 255, 255, 0.5)";
+    } else if(player.invis > 0 && player.invis < 30){
+      if(player.invis%6==1 || player.invis%6==2 || player.invis%6==3){
+        color = "rgba(255, 255, 255, 0.8)";
+      } else {
+        color = "rgba(255, 255, 255, 0.5)";
+      }
     }
     drawGhost(canvas.width / 2, canvas.height / 2, 20, color);
     ctx.beginPath();
@@ -85,7 +91,7 @@ function drawEnemies() {
     if (enemies[e].x != null && enemies[e].y != null) {
       let color = "white";
       if(enemies[e].i!=undefined){
-        color = "rgba(255, 255, 255, "+(15-enemies[e].i)/15+""
+        color = "rgba(255, 255, 255, "+(15-enemies[e].i)/15+")"
       }
       drawGhost(canvas.width / 2 - (player.x - enemies[e].x), canvas.height / 2 - (player.y - enemies[e].y), 20, color);
       ctx.beginPath();
