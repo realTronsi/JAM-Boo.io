@@ -18,9 +18,15 @@ function drawGame() {
   if (alive == 0) {
     let color = "white"
     if(baseinvis-player.invis<=15){
-      color = "rgba(255, 255, 255, "+(Math.abs((baseinvis-player.invis)-15)/2)/7.5+"";
-    } else if(player.invis > 0) {
-      color = "rgba(255, 255, 255, 0.5";
+      color = "rgba(255, 255, 255, "+((Math.abs((baseinvis-player.invis)-15)/30)+0.5)+")";
+    } else if(player.invis > 30) {
+      color = "rgba(255, 255, 255, 0.5)";
+    } else if(player.invis > 0 && player.invis < 30){
+      if(player.invis%6==1 || player.invis%6==2 || player.invis%6==3){
+        color = "rgba(255, 255, 255, 0.8)";
+      } else {
+        color = "rgba(255, 255, 255, 0.5)";
+      }
     }
     drawGhost(canvas.width / 2, canvas.height / 2, 20, color);
     ctx.beginPath();
@@ -30,6 +36,9 @@ function drawGame() {
     const fit_name = fitText(nickname, 350);
     ctx.fillText(fit_name, canvas.width / 2, canvas.height / 2 + 55);
     drawLB();
+    if(player.invis<0){
+      drawReloadBar(player.invis);
+    }
     drawAmmo(player.reload);
     drawNotifications();
     drawMouseArrow();
@@ -50,6 +59,11 @@ function drawGame() {
     ctx.textAlign = "center";
     ctx.fillStyle = "rgba(200, 200, 200, " + Math.min(alive / 50, 1) + ")";
     ctx.fillText(`Final Score: ${finalScore}`, 800, 260);
+    ctx.beginPath();
+    ctx.font = "30px Poppins";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "rgba(200, 200, 200, " + Math.min(alive / 50, 1) + ")";
+    ctx.fillText(`press space to respawn`, 800, 700);
   }
 }
 
@@ -85,7 +99,7 @@ function drawEnemies() {
     if (enemies[e].x != null && enemies[e].y != null) {
       let color = "white";
       if(enemies[e].i!=undefined){
-        color = "rgba(255, 255, 255, "+(15-enemies[e].i)/15+""
+        color = "rgba(255, 255, 255, "+(15-enemies[e].i)/15+")"
       }
       drawGhost(canvas.width / 2 - (player.x - enemies[e].x), canvas.height / 2 - (player.y - enemies[e].y), 20, color);
       ctx.beginPath();

@@ -21,8 +21,8 @@ qt = new Quadtree({
 
 module.exports = { clients, qt, candies, gums, lb_timer };
 
+const { Update, respawn_queue } = require("./update");
 const { Vector, Player, Candy, isWhiteSpace, emitAll } = require("./utility");
-const Update = require("./update");
 const Input = require("./input");
 
 setInterval(Update, 30);

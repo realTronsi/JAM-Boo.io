@@ -75,7 +75,7 @@ class Gum {
     let q = qt.find(e => {
       return e.item.id == this.id;
     })[0];
-    if(q){
+    if (q) {
       q.x = this.x - 8;
       q.y = this.y - 8;
     }
@@ -95,8 +95,8 @@ class Gum {
 
 class Player {
   constructor(id, nick, ws) {
-    this.x = getRandomInt(50, MAP_SIZE-50);
-    this.y = getRandomInt(50, MAP_SIZE-50);
+    this.x = getRandomInt(50, MAP_SIZE - 50);
+    this.y = getRandomInt(50, MAP_SIZE - 50);
     this.score = 0;
     this.reload = 0;
     this.spd = 9;
@@ -111,16 +111,17 @@ class Player {
     this.baseinvis = 0;
     this.alive = true;
     this.killedBy = "";
+    this.respawn = false;
   }
   update() {
     if (this.alive) {
       this.move();
       this.collisions();
-      if(this.invis<0){
+      if (this.invis < 0) {
         this.invis++;
       }
-      if(this.invis>0){
-        if(this.invis == 1){
+      if (this.invis > 0) {
+        if (this.invis == 1) {
           this.invis = -300;
         }
         this.invis--;
@@ -176,14 +177,8 @@ class Player {
               i: this.id
             }
           ), [this]);
-          const gainedScore = Math.round(Math.sqrt(this.score))+2;
+          const gainedScore = Math.round(Math.pow(this.score, 0.7)) + 2;
           this.killedBy.score += gainedScore;
-          this.reload = 0;
-          this.score = 0;
-          this.up = 0;
-          this.down = 0;
-          this.left = 0;
-          this.right = 0;
         }
       }
     })

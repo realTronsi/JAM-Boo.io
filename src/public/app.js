@@ -107,5 +107,7 @@ const processMsg = msg => {
     });
   } else if(msg.m == "bi"){
     baseinvis = msg.i;
+  } else if(msg.m == "r"){
+    alive = 0;
   }
 }
