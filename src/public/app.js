@@ -11,10 +11,12 @@ let gums = [];
 let names = [];
 let scores = [];
 let lb = [];
+let notifications = [];
 let player = {};
 let nickname;
 let alive = 0;
 let killedBy = "";
+let finalScore = 0;
 
 function main(ws) {
   ws.onopen = function() {
@@ -81,7 +83,9 @@ const processMsg = msg => {
       id: msg.i
     });
   } else if(msg.m=="rn"){
-    names.splice(names.indexOf(names.find(n=>n.id==msg.i)), 1);
+    if(names.find(n=>n.id==msg.i)){
+      names.splice(names.indexOf(names.find(n=>n.id==msg.i)), 1);
+    }
   } else if(msg.m=="rc"){
     candies.splice(msg.i, 1);
   } else if(msg.m=="c"){
@@ -92,5 +96,12 @@ const processMsg = msg => {
   } else if (msg.m=="di"){
     alive = 1;
     killedBy = msg.k;
+    finalScore = msg.s;
+  } else if(msg.m == "k"){
+    notifications.push({
+      type: "kill",
+      name: msg.k,
+      timer: 180
+    });
   }
 }

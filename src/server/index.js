@@ -30,6 +30,7 @@ setInterval(Update, 30);
 app.use(express.static("src/public"));
 app.use(express.static("src/public/util"));
 app.use(express.static("src/public/graphics"));
+app.use(express.static("src/public/graphics/extra"));
 
 app.get("/", (req, res) => {
   res.sendFile("index.html");

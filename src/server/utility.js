@@ -75,8 +75,10 @@ class Gum {
     let q = qt.find(e => {
       return e.item.id == this.id;
     })[0];
-    q.x = this.x - 8;
-    q.y = this.y - 8;
+    if(q){
+      q.x = this.x - 8;
+      q.y = this.y - 8;
+    }
     this.lifespan--;
   }
   delete() {
@@ -93,8 +95,8 @@ class Gum {
 
 class Player {
   constructor(id, nick, ws) {
-    this.x = 1000;
-    this.y = 1000;
+    this.x = getRandomInt(50, MAP_SIZE-50);
+    this.y = getRandomInt(50, MAP_SIZE-50);
     this.score = 0;
     this.reload = 0;
     this.spd = 9;
@@ -145,16 +147,11 @@ class Player {
         if (c.item.client_id != this.id) {
           c.item.delete();
           this.alive = false;
-          this.reload = 0;
-          this.score = 0;
-          this.up = 0;
-          this.down = 0;
-          this.left = 0;
-          this.right = 0;
           this.killedBy = clients.find(e => e.id == c.item.client_id);
           let payLoad = {
             m: "di",
-            k: this.killedBy.nickname
+            k: this.killedBy.nickname,
+            s: this.score
           };
           this.ws.send(msgpack.encode(payLoad));
           payLoad = {
@@ -167,7 +164,15 @@ class Player {
               m: "rn",
               i: this.id
             }
-          ))
+          ), [this]);
+          const gainedScore = Math.round(Math.sqrt(this.score))+2;
+          this.killedBy.score += gainedScore;
+          this.reload = 0;
+          this.score = 0;
+          this.up = 0;
+          this.down = 0;
+          this.left = 0;
+          this.right = 0;
         }
       }
     })
@@ -202,6 +207,12 @@ function emitAll(message, exception) {
       c.ws.send(message);
     }
   })
+}
+
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min);
 }
 
 module.exports = { Vector, Player, Candy, isWhiteSpace, emitAll };
