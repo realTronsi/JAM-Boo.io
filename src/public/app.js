@@ -13,6 +13,7 @@ let scores = [];
 let lb = [];
 let notifications = [];
 let player = {};
+let baseinvis = 90;
 let nickname;
 let alive = 0;
 let killedBy = "";
@@ -58,6 +59,7 @@ const processMsg = msg => {
     player.x = msg.p.x;
     player.y = msg.p.y;
     player.reload = msg.p.r;
+    player.invis = msg.p.i;
     enemies = msg.e;
     gums = msg.g;
     if(msg.p.s!=undefined){
@@ -103,5 +105,7 @@ const processMsg = msg => {
       name: msg.k,
       timer: 180
     });
+  } else if(msg.m == "bi"){
+    baseinvis = msg.i;
   }
 }

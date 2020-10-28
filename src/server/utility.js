@@ -107,6 +107,8 @@ class Player {
     this.down = 0;
     this.left = 0;
     this.right = 0;
+    this.invis = 0;
+    this.baseinvis = 0;
     this.alive = true;
     this.killedBy = "";
   }
@@ -114,6 +116,15 @@ class Player {
     if (this.alive) {
       this.move();
       this.collisions();
+      if(this.invis<0){
+        this.invis++;
+      }
+      if(this.invis>0){
+        if(this.invis == 1){
+          this.invis = -300;
+        }
+        this.invis--;
+      }
     } else {
       this.x = this.killedBy.x;
       this.y = this.killedBy.y;

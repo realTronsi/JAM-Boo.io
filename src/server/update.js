@@ -11,18 +11,50 @@ function Update(){
     c.update();
     if(c.alive==true){
       if(lb_timer >= 30){
-        e.push({
-          id: c.id,
-          x: Math.round(c.x),
-          y: Math.round(c.y),
-          s: c.score
-        })
+        if(c.baseinvis-c.invis > 15 && c.invis > 0){
+          e.push({
+            id: c.id,
+            x: null,
+            y: null,
+            s: c.score
+          })
+        } else if(c.baseinvis-c.invis <= 15 && c.invis > 0){
+          e.push({
+            id: c.id,
+            x: Math.round(c.x),
+            y: Math.round(c.y),
+            s: c.score,
+            i: c.baseinvis-c.invis
+          })
+        } else {
+          e.push({
+            id: c.id,
+            x: Math.round(c.x),
+            y: Math.round(c.y),
+            s: c.score
+          })
+        }
       } else {
-        e.push({
-          id: c.id,
-          x: Math.round(c.x),
-          y: Math.round(c.y)
-        })
+        if(c.baseinvis-c.invis > 15 && c.invis > 0){
+          e.push({
+            id: c.id,
+            x: null,
+            y: null
+          })
+        } else if(c.invis > 0 && c.baseinvis-c.invis <= 15){
+          e.push({
+            id: c.id,
+            x: Math.round(c.x),
+            y: Math.round(c.y),
+            i: c.baseinvis-c.invis
+          })
+        } else {
+          e.push({
+            id: c.id,
+            x: Math.round(c.x),
+            y: Math.round(c.y)
+          })
+        }
       }
     }
   })
@@ -57,12 +89,14 @@ function Update(){
         x: Math.round(c.x),
         y: Math.round(c.y),
         r: c.reload,
+        i: c.invis,
         s: c.score
       };
     } else {
       payLoad.p = {
         x: Math.round(c.x),
         y: Math.round(c.y),
+        i: c.invis,
         r: c.reload
       };
     }

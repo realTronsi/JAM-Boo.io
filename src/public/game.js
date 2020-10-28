@@ -7,7 +7,6 @@ function joinGame() {
 
 function game() {
   drawGame();
-  drawMouseArrow();
   requestAnimationFrame(game);
 }
 
@@ -17,7 +16,13 @@ function drawGame() {
   drawGums();
   drawEnemies();
   if (alive == 0) {
-    drawGhost(canvas.width / 2, canvas.height / 2, 20, "#fff");
+    let color = "white"
+    if(baseinvis-player.invis<=15){
+      color = "rgba(255, 255, 255, "+(Math.abs((baseinvis-player.invis)-15)/2)/7.5+"";
+    } else if(player.invis > 0) {
+      color = "rgba(255, 255, 255, 0.5";
+    }
+    drawGhost(canvas.width / 2, canvas.height / 2, 20, color);
     ctx.beginPath();
     ctx.fillStyle = "white";
     ctx.font = "30px Poppins";
@@ -27,22 +32,23 @@ function drawGame() {
     drawLB();
     drawAmmo(player.reload);
     drawNotifications();
+    drawMouseArrow();
   } else {
-    if(alive < 50){
+    if (alive < 50) {
       alive++
     }
     ctx.beginPath();
-    ctx.fillStyle = "rgba(0, 0, 0, "+Math.min(alive/100, 0.5)+")";
+    ctx.fillStyle = "rgba(0, 0, 0, " + Math.min(alive / 100, 0.5) + ")";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
     ctx.font = "bold 45px Poppins";
     ctx.textAlign = "center";
-    ctx.fillStyle = "rgba(200, 200, 200, "+Math.min(alive/50, 1)+")";
+    ctx.fillStyle = "rgba(200, 200, 200, " + Math.min(alive / 50, 1) + ")";
     ctx.fillText(`You were killed by ${killedBy}`, 800, 200);
     ctx.beginPath();
     ctx.font = "30px Poppins";
     ctx.textAlign = "center";
-    ctx.fillStyle = "rgba(200, 200, 200, "+Math.min(alive/50, 1)+")";
+    ctx.fillStyle = "rgba(200, 200, 200, " + Math.min(alive / 50, 1) + ")";
     ctx.fillText(`Final Score: ${finalScore}`, 800, 260);
   }
 }
@@ -76,14 +82,20 @@ function drawMap() {
 
 function drawEnemies() {
   for (let e in enemies) {
-    drawGhost(canvas.width / 2 - (player.x - enemies[e].x), canvas.height / 2 - (player.y - enemies[e].y), 20, "#fff");
-    ctx.beginPath();
-    ctx.fillStyle = "white";
-    ctx.font = "30px Poppins";
-    ctx.textAlign = "center";
-    if (names[e] != undefined) {
-      const fit_name = fitText(names[e].n, 350);
-      ctx.fillText(fit_name, canvas.width / 2 - (player.x - enemies[e].x), canvas.height / 2 - (player.y - enemies[e].y) + 55);
+    if (enemies[e].x != null && enemies[e].y != null) {
+      let color = "white";
+      if(enemies[e].i!=undefined){
+        color = "rgba(255, 255, 255, "+(15-enemies[e].i)/15+""
+      }
+      drawGhost(canvas.width / 2 - (player.x - enemies[e].x), canvas.height / 2 - (player.y - enemies[e].y), 20, color);
+      ctx.beginPath();
+      ctx.fillStyle = color;
+      ctx.font = "30px Poppins";
+      ctx.textAlign = "center";
+      if (names[e] != undefined) {
+        const fit_name = fitText(names[e].n, 350);
+        ctx.fillText(fit_name, canvas.width / 2 - (player.x - enemies[e].x), canvas.height / 2 - (player.y - enemies[e].y) + 55);
+      }
     }
   }
 }
@@ -121,28 +133,28 @@ function drawLB() {
   }
 }
 
-function drawNotifications(){
+function drawNotifications() {
   try {
-  for(let n = notifications.length-1; n >= 0; n--){
-    notifications[n].timer--;
-    if(notifications[n].timer<0){
-      notifications.splice(n, 1);
-      n--;
+    for (let n = notifications.length - 1; n >= 0; n--) {
+      notifications[n].timer--;
+      if (notifications[n].timer < 0) {
+        notifications.splice(n, 1);
+        n--;
+      }
+      if (notifications[n] == undefined) continue;
+      if (notifications[n].type == "kill") {
+        ctx.textAlign = "left";
+        ctx.font = "21px Poppins";
+        const fit_name = fitText(notifications[n].name, 450);
+        const message = `You killed ${fit_name}`;
+        ctx.beginPath();
+        ctx.fillStyle = "rgba(100, 100, 100, " + Math.min(notifications[n].timer, 80) / 100 + ")";
+        ctx.fillRect(800 - (ctx.measureText(message).width + 40) / 2, 70 + 35 * n, ctx.measureText(message).width + 40, 30);
+        ctx.beginPath();
+        ctx.fillStyle = "rgba(200, 200, 200, " + Math.min(notifications[n].timer, 80) / 100 + ")";
+        ctx.fillText(message, 800 - (ctx.measureText(message).width) / 2, 91 + 35 * n);
+      }
     }
-    if(notifications[n]==undefined)continue;
-    if(notifications[n].type == "kill"){
-      ctx.textAlign = "left";
-      ctx.font = "21px Poppins";
-      const fit_name = fitText(notifications[n].name, 450);
-      const message = `You killed ${fit_name}`;
-      ctx.beginPath();
-      ctx.fillStyle = "rgba(100, 100, 100, "+Math.min(notifications[n].timer, 80)/100+")";
-      ctx.fillRect(800-(ctx.measureText(message).width+40)/2, 70+35*n, ctx.measureText(message).width+40, 30);
-      ctx.beginPath();
-      ctx.fillStyle = "rgba(200, 200, 200, "+Math.min(notifications[n].timer, 80)/100+")";
-      ctx.fillText(message, 800-(ctx.measureText(message).width)/2, 91+35*n);
-    }
-  }
   } catch (err) {
     alert(err);
   }
