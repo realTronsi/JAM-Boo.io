@@ -36,6 +36,9 @@ function drawGame() {
     const fit_name = fitText(nickname, 350);
     ctx.fillText(fit_name, canvas.width / 2, canvas.height / 2 + 55);
     drawLB();
+    if(player.invis<0){
+      drawReloadBar(player.invis);
+    }
     drawAmmo(player.reload);
     drawNotifications();
     drawMouseArrow();
@@ -56,6 +59,11 @@ function drawGame() {
     ctx.textAlign = "center";
     ctx.fillStyle = "rgba(200, 200, 200, " + Math.min(alive / 50, 1) + ")";
     ctx.fillText(`Final Score: ${finalScore}`, 800, 260);
+    ctx.beginPath();
+    ctx.font = "30px Poppins";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "rgba(200, 200, 200, " + Math.min(alive / 50, 1) + ")";
+    ctx.fillText(`press space to respawn`, 800, 700);
   }
 }
 

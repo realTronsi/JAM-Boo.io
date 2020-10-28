@@ -2,9 +2,10 @@ const msgpack = require("msgpack-lite");
 let { clients, qt, candies, gums, lb_timer } = require("./index");
 const { Vector, Player, Candy, isWhiteSpace, emitAll } = require("./utility");
 
-const respawn_queue = [];
+let respawn_queue = [];
 
 function Update() {
+  respawn_queue = [];
   if (candies.length < 50) {
     spawnCandy();
   }
@@ -136,7 +137,7 @@ function Update() {
     c.ws.send(msgpack.encode({
       m: "r"
     }));
-    clients.push(clients.splice(clients.indexOf(clients.find(e => e.id == c.id)), 1)[0]);
+    if(clients.find(a => a.id == c.id))clients.push(clients.splice(clients.indexOf(clients.find(a => a.id == c.id)), 1)[0]);
   })
 }
 
