@@ -1,6 +1,10 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
+window.onbeforeunload = function() {
+  return true;
+};
+
 let dws;
 let pl_c = false;
 

@@ -5,6 +5,17 @@ const app = express();
 Quadtree = require("quadtree-lib");
 const msgpack = require("msgpack-lite");
 
+const fs = require("fs");
+const util = require("util");
+
+let errlog = fs.createWriteStream(__dirname + '/errorlog.txt', { flags: 'a' });
+
+process.on('uncaughtException', function(err) {
+  console.log(err);
+  let d = new Date();
+  errlog.write(util.format(`${d.toString()}: ${err}\n`));
+});
+
 const wss = new WebSocket.Server({ noServer: true });
 
 const clients = [];
@@ -35,21 +46,21 @@ app.use(express.static("src/public/graphics/extra"));
 app.get("/", (req, res) => {
   res.sendFile("index.html");
 });
-app.get("*", (req, res)=>{
+app.get("*", (req, res) => {
   res.redirect("/");
 })
 
 wss.on("connection", ws => {
   ws.binaryType = 'arraybuffer';
   const id = uuid.v4();
-  let client;
+  let client = null;
   ws.on("message", e => {
     try {
       const msg = msgpack.decode(new Uint8Array(e));
-      if(msg.m=="j"){
+      if (msg.m == "j" && client == null) {
         let nickname = msg.n;
         nickname = nickname.slice(0, 13);
-        if(isWhiteSpace(nickname)){
+        if (isWhiteSpace(nickname)) {
           nickname = "Player"
         }
         client = new Player(id, nickname, ws);
@@ -60,16 +71,16 @@ wss.on("connection", ws => {
             i: id
           }
         ));
-        let filtered_clients = clients.filter(c=>c.alive==true);
-        let names = filtered_clients.map(c=>c.nickname);
-        let ids = filtered_clients.map(c=>c.id);
+        let filtered_clients = clients.filter(c => c.alive == true);
+        let names = filtered_clients.map(c => c.nickname);
+        let ids = filtered_clients.map(c => c.id);
         clients.push(client);
 
         let __candies__ = [];
 
         const _cand = JSON.parse(JSON.stringify(candies));
         _cand.forEach(c => delete c.id);
-        _cand.forEach(c=>__candies__.push({x:c.x, y:c.y}));
+        _cand.forEach(c => __candies__.push({ x: c.x, y: c.y }));
 
         const payLoad = {
           m: "j",
@@ -83,12 +94,12 @@ wss.on("connection", ws => {
       } else {
         Input(msg, client);
       }
-    } catch (err){
+    } catch (err) {
       console.log(err)
     }
   })
   ws.on("close", e => {
-    clients.splice(clients.indexOf(clients.find(c=>c.id==client.id)), 1);
+    clients.splice(clients.indexOf(clients.find(c => c.id == client.id)), 1);
     emitAll(msgpack.encode(
       {
         m: "rn",
