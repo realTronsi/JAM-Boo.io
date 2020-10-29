@@ -135,6 +135,7 @@ function drawLB() {
   ctx.font = "bold 30px Poppins";
   ctx.fillText("Leaderboard", 20, 40);
   for (let l in lb) {
+    if(l>=10)break;
     ctx.fillStyle = "#eee";
     ctx.font = "21px Poppins";
     if (lb[l].isClient == true) {
