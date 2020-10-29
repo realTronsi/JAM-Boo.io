@@ -178,7 +178,7 @@ class Player {
                 i: this.id
               }
             ), [this]);
-            const gainedScore = Math.round(Math.pow(this.score, 0.7)) + 2;
+            const gainedScore = Math.round(Math.pow(this.score, 0.9)) + 2;
             this.killedBy.score += gainedScore;
           }
         }

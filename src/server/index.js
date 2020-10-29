@@ -13,7 +13,7 @@ let errlog = fs.createWriteStream(__dirname + '/errorlog.txt', { flags: 'a' });
 process.on('uncaughtException', function(err) {
   console.log(err);
   let d = new Date();
-  errlog.write(util.format(`${d.toString()}: ${err}\n`));
+  errlog.write(util.format(`${d.toString()}: ${err}\n\n`));
 });
 
 const wss = new WebSocket.Server({ noServer: true });
