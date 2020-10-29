@@ -158,27 +158,29 @@ class Player {
       } else if (c.type == "gum") {
         if (c.item.client_id != this.id) {
           c.item.delete();
-          this.alive = false;
-          this.killedBy = clients.find(e => e.id == c.item.client_id);
-          let payLoad = {
-            m: "di",
-            k: this.killedBy.nickname,
-            s: this.score
-          };
-          this.ws.send(msgpack.encode(payLoad));
-          payLoad = {
-            m: "k",
-            k: this.nickname
-          }
-          this.killedBy.ws.send(msgpack.encode(payLoad));
-          emitAll(msgpack.encode(
-            {
-              m: "rn",
-              i: this.id
+          if (this.alive == true) {
+            this.alive = false;
+            this.killedBy = clients.find(e => e.id == c.item.client_id);
+            let payLoad = {
+              m: "di",
+              k: this.killedBy.nickname,
+              s: this.score
+            };
+            this.ws.send(msgpack.encode(payLoad));
+            payLoad = {
+              m: "k",
+              k: this.nickname
             }
-          ), [this]);
-          const gainedScore = Math.round(Math.pow(this.score, 0.7)) + 2;
-          this.killedBy.score += gainedScore;
+            this.killedBy.ws.send(msgpack.encode(payLoad));
+            emitAll(msgpack.encode(
+              {
+                m: "rn",
+                i: this.id
+              }
+            ), [this]);
+            const gainedScore = Math.round(Math.pow(this.score, 0.7)) + 2;
+            this.killedBy.score += gainedScore;
+          }
         }
       }
     })

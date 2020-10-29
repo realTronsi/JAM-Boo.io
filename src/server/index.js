@@ -47,7 +47,8 @@ wss.on("connection", ws => {
     try {
       const msg = msgpack.decode(new Uint8Array(e));
       if(msg.m=="j"){
-        let nickname = msg.n
+        let nickname = msg.n;
+        nickname = nickname.slice(0, 13);
         if(isWhiteSpace(nickname)){
           nickname = "Player"
         }
@@ -59,8 +60,9 @@ wss.on("connection", ws => {
             i: id
           }
         ));
-        names = clients.map(c=>c.nickname);
-        ids = clients.map(c=>c.id);
+        let filtered_clients = clients.filter(c=>c.alive==true);
+        let names = filtered_clients.map(c=>c.nickname);
+        let ids = filtered_clients.map(c=>c.id);
         clients.push(client);
 
         let __candies__ = [];
