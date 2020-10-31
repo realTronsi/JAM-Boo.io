@@ -41,18 +41,23 @@ body {
 }
 
 #content button {
-  margin: 40px;
+  margin: 0;
+  margin-top: 60px;
   font-size: 40px;
   font-weight: 600;
   border: none;
   border-radius: 5px;
+  color: rgb(70, 45, 0);
   background-color: orange;
-  padding: 20px 50px;
-  transition: 0.1s ease-in;
+  align-content: center;
+  padding: 20px 110px;
+  transition: 0.2s ease-in;
 }
 
 #content button:hover {
-  padding: 20px 105px;
+  padding: 20px 160px;
+  color: rgb(112, 73, 0);
+  background-color: rgb(255, 172, 19);
 }
 
 #content button:focus {
@@ -63,7 +68,7 @@ body {
   font-size: 130px;
   font-weight: 700;
   bottom: 20px;
-  color: orange;
+  color:orange;
 }
 
 #err_msg {

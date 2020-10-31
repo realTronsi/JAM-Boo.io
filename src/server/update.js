@@ -115,7 +115,7 @@ function Update() {
     const MAP_SIZE = 2000;
     c.x = getRandomInt(50, MAP_SIZE - 50);
     c.y = getRandomInt(50, MAP_SIZE - 50);
-    c.score = Math.round(Math.pow(c.score, 0.7));
+    c.score = Math.round(Math.pow(c.score, 0.9));
     c.reload = 0;
     c.spd = 9;
     c.up = 0;
